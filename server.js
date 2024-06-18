@@ -2,9 +2,12 @@ const express = require('express')
 const app = express()
 const path = require('path');
 const fs = require('fs');
+const { randomUUID } = require('crypto');
 const PORT = process.env.port || 3001;
 
 app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, '/public/notes.html')));
 
@@ -15,7 +18,7 @@ app.get('/api/notes', (req, res) => {
 });
 
 app.post('/api/notes', (req, res) => {
-console.log(req.body);
+  console.log(req.body);
   const { title, text } = req.body;
 
   if (title && text) {
@@ -23,7 +26,7 @@ console.log(req.body);
     const newNote = {
       title,
       text,
-      note_id: uuid(),
+      note_id: randomUUID(),
     }
 
     fs.readFile("./db/db.json", "utf8", (err, data) => {
